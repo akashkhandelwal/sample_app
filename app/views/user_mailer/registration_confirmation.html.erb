@@ -1,0 +1,5 @@
+<h1><%= @user.name %>,</h1>
+
+<h2>Thank you for registering !</h2>
+
+<p><%= link_to "Click here to confirm registration", confirmation_url(@user.id, @user.confirmation_token) %></p>

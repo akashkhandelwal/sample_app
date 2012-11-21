@@ -1,7 +1,11 @@
 module SessionsHelper
 	
 	def sign_in(user)
-    cookies.permanent[:remember_token] = user.remember_token
+    if params[:remember_me]
+      cookies.permanent[:remember_token] = user.remember_token
+    else
+      cookies[:remember_token] = user.remember_token
+    end
     self.current_user = user
   end
 
@@ -10,7 +14,7 @@ module SessionsHelper
   end
 
   def current_user
-    @current_user ||= User.find_by_remember_token(cookies[:remember_token])
+    @current_user ||= User.find_by_remember_token(cookies[:remember_token]) if cookies[:remember_token]
   end
 
   def current_user?(user)
@@ -40,5 +44,12 @@ module SessionsHelper
 
   def store_location
     session[:return_to] = request.url
+  end
+
+  def send_confirmation_mail(user)
+    @user = user
+    UserMailer.registration_confirmation(@user).deliver
+    flash[:notice] = "Please check your mail and click on sent link to confirm your registration"
+    redirect_to(root_path)
   end
 end

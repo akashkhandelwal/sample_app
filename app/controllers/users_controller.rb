@@ -20,11 +20,26 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+      send_confirmation_mail(@user)
+      #sign_in @user
+      #flash[:success] = "Welcome to the Sample App!"
+      #redirect_to @user
     else
       render 'new'
+    end
+  end
+
+  def confirm
+    @user = User.find(params[:id])   
+    if @user.confirmation_token == params[:confirmation_token]
+      @user.toggle!(:confirmed)
+      if @user.confirmed == true
+        sign_in @user
+        flash[:success] = "Welcome to the Sample App!"
+        redirect_to @user
+      else
+        send_confirmation_mail
+      end
     end
   end
 

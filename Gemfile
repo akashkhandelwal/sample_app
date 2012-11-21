@@ -59,3 +59,4 @@ end
 
 # To use debugger
 gem 'debugger'
+gem 'mail', '2.4.4'
